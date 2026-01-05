@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - PWD Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-server text-danger" style="font-size: 4rem;"></i>
+                <h1 class="display-1">500</h1>
+                <h3 class="card-title">Server Error</h3>
+                <p class="card-text">An error occurred while processing your request. Please try again later.</p>
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Go to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

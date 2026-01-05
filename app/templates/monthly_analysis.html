@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Monthly Analysis - PWD Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Monthly Analysis for {{ monthly_stats.month }}</h1>
+    </div>
+</div>
+
+<div class="dashboard-stats">
+    <div class="card stat-card bg-primary text-white">
+        <div class="number">{{ monthly_stats.total_records }}</div>
+        <div class="label">Total Records</div>
+    </div>
+    <div class="card stat-card bg-info text-white">
+        <div class="number">{{ monthly_stats.total_students }}</div>
+        <div class="label">Total Students</div>
+    </div>
+    <div class="card stat-card bg-success text-white">
+        <div class="number">{{ monthly_stats.avg_attendance }}%</div>
+        <div class="label">Avg. Attendance</div>
+    </div>
+    <div class="card stat-card bg-warning text-dark">
+        <div class="number">{{ monthly_stats.defaulter_count }}</div>
+        <div class="label">Defaulter Count</div>
+    </div>
+</div>
+
+<!-- Attendance Categories -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Attendance Categories for {{ monthly_stats.month }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ monthly_stats.excellent_count }}</h3>
+                                <p class="mb-0">Excellent (90%+)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-dark">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ monthly_stats.good_count }}</h3>
+                                <p class="mb-0">Good (75-89%)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ monthly_stats.defaulter_count }}</h3>
+                                <p class="mb-0">Defaulter (&lt;75%)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Defaulter List for this month -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Defaulter List for {{ monthly_stats.month }} (Attendance &lt; 75%)</h5>
+            </div>
+            <div class="card-body">
+                {% if defaulter_list and defaulter_list|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Ticket No</th>
+                                <th>Name</th>
+                                <th>Trade</th>
+                                <th>Attendance %</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for defaulter in defaulter_list %}
+                            <tr>
+                                <td>{{ defaulter.student.ticket_no }}</td>
+                                <td>{{ defaulter.student.name }}</td>
+                                <td>{{ defaulter.student.qualification_trade }}</td>
+                                <td><span class="badge bg-danger">{{ defaulter.attendance.attendance_percentage }}%</span></td>
+                                <td>
+                                    <a href="{{ url_for('search.search_api', ticket_no=defaulter.student.ticket_no) }}" 
+                                       class="btn btn-sm btn-outline-info">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No defaulter students found for {{ monthly_stats.month }}.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <a href="{{ url_for('analysis.attendance_analysis') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Overall Analysis
+        </a>
+    </div>
+</div>
+{% endblock %}

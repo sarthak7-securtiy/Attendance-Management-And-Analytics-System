@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Search Student - PWD Management System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Search Student by Ticket Number</h4>
+            </div>
+            <div class="card-body">
+                <form id="search-form" method="POST" action="{{ url_for('search.search') }}">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <label for="ticket_no" class="form-label">Ticket Number</label>
+                            <input type="text" class="form-control" id="ticket_no" name="ticket_no" 
+                                   placeholder="Enter Ticket Number" required>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if student %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Student Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Ticket Number:</strong> {{ student.ticket_no }}</p>
+                        <p><strong>Name:</strong> {{ student.name }}</p>
+                        <p><strong>Father's Name:</strong> {{ student.father_name }}</p>
+                        <p><strong>Personal Number:</strong> {{ student.pno }}</p>
+                        <p><strong>Gender:</strong> {{ student.gender }}</p>
+                        <p><strong>Date of Birth:</strong> {{ student.dob.strftime('%d %B, %Y') if student.dob else 'N/A' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Mobile:</strong> {{ student.mobile }}</p>
+                        <p><strong>Email:</strong> {{ student.email_id }}</p>
+                        <p><strong>Qualification Trade:</strong> {{ student.qualification_trade }}</p>
+                        <p><strong>College:</strong> {{ student.college_name }}</p>
+                        <p><strong>Passing Year:</strong> {{ student.passing_year }}</p>
+                        <p><strong>SSC Percentage:</strong> {{ student.ssc_percentage }}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if attendance_records %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Attendance Records</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Total Days</th>
+                                <th>Present Days</th>
+                                <th>Absent Days</th>
+                                <th>Attendance %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attendance in attendance_records %}
+                            <tr>
+                                <td>{{ attendance.month }}</td>
+                                <td>{{ attendance.total_days }}</td>
+                                <td>{{ attendance.present_days }}</td>
+                                <td>{{ attendance.absent_days }}</td>
+                                <td class="attendance-percentage">{{ attendance.attendance_percentage }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if attendance.attendance_percentage >= 90 %}bg-success
+                                        {% elif attendance.attendance_percentage >= 75 %}bg-warning text-dark
+                                        {% else %}bg-danger{% endif %}">
+                                        {% if attendance.attendance_percentage >= 90 %}Excellent
+                                        {% elif attendance.attendance_percentage >= 75 %}Good
+                                        {% else %}Defaulter{% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update progress bars for attendance percentages
+    document.querySelectorAll('.attendance-percentage').forEach(function(element) {
+        const percentage = parseFloat(element.textContent);
+        const statusBadge = element.parentElement.nextElementSibling.querySelector('.badge');
+        
+        if (percentage >= 90) {
+            statusBadge.className = 'badge bg-success';
+            statusBadge.textContent = 'Excellent';
+        } else if (percentage >= 75) {
+            statusBadge.className = 'badge bg-warning text-dark';
+            statusBadge.textContent = 'Good';
+        } else {
+            statusBadge.className = 'badge bg-danger';
+            statusBadge.textContent = 'Defaulter';
+        }
+    });
+});
+</script>
+{% endblock %}

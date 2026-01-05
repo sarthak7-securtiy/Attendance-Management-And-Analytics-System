@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Student Detail - PWD Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Student Details</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="mb-0">{{ student.name }} ({{ student.ticket_no }})</h5>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{{ url_for('attendance.get_student_attendance', ticket_no=student.ticket_no) }}" class="btn btn-info">
+                            <i class="fas fa-calendar-alt"></i> View Attendance
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Personal Information</h6>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Ticket Number:</strong></td>
+                                <td>{{ student.ticket_no }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Personal Number:</strong></td>
+                                <td>{{ student.pno }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Name:</strong></td>
+                                <td>{{ student.name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Father's Name:</strong></td>
+                                <td>{{ student.father_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Date of Birth:</strong></td>
+                                <td>{{ student.dob.strftime('%d %B, %Y') if student.dob else 'N/A' }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gender:</strong></td>
+                                <td>{{ student.gender }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Contact Information</h6>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Mobile:</strong></td>
+                                <td>{{ student.mobile }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Email:</strong></td>
+                                <td>{{ student.email_id }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Address:</strong></td>
+                                <td>{{ student.address }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Current Address:</strong></td>
+                                <td>{{ student.current_address_route }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h6>Educational Information</h6>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Qualification Trade:</strong></td>
+                                <td>{{ student.qualification_trade }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>College Name:</strong></td>
+                                <td>{{ student.college_name }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Passing Year:</strong></td>
+                                <td>{{ student.passing_year }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SSC Percentage:</strong></td>
+                                <td>{{ student.ssc_percentage }}%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>HSC Percentage:</strong></td>
+                                <td>{{ student.hsc_percentage }}%</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Additional Information</h6>
+                        <table class="table table-borderless">
+                            <tr>
+                                <td><strong>Medical Policy:</strong></td>
+                                <td>{{ student.medical_policy }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Blood Group:</strong></td>
+                                <td>{{ student.blood_group }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Aadhaar Number:</strong></td>
+                                <td>{{ student.aadhaar_no }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>PAN Number:</strong></td>
+                                <td>{{ student.pan_no }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Attendance - PWD Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Upload Attendance Data</h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Upload Excel File</h5>
+            </div>
+            <div class="card-body">
+                <form id="upload-form" method="POST" action="{{ url_for('attendance.upload_attendance') }}" enctype="multipart/form-data">
+                    <div class="upload-box">
+                        <i class="fas fa-file-excel text-success"></i>
+                        <p>Select an Excel file containing attendance data</p>
+                        <p class="text-muted">Required columns: Ticket No, Student Name, Month, Total Working Days, Present Days, Absent Days, Attendance Percentage</p>
+                        <input type="file" name="file" class="form-control" accept=".xlsx,.xls" required>
+                    </div>
+                    
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload"></i> Upload File
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

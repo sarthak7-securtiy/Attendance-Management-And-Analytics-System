@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Student Attendance - PWD Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Attendance for {{ student.name }}</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="mb-0">{{ student.name }} ({{ student.ticket_no }})</h5>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{{ url_for('student.get_student', ticket_no=student.ticket_no) }}" class="btn btn-outline-primary">
+                            <i class="fas fa-user"></i> View Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if attendance_records %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Total Days</th>
+                                <th>Present Days</th>
+                                <th>Absent Days</th>
+                                <th>Attendance %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attendance in attendance_records %}
+                            <tr>
+                                <td>{{ attendance.month }}</td>
+                                <td>{{ attendance.total_days }}</td>
+                                <td>{{ attendance.present_days }}</td>
+                                <td>{{ attendance.absent_days }}</td>
+                                <td class="attendance-percentage">{{ attendance.attendance_percentage }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if attendance.attendance_percentage >= 90 %}bg-success
+                                        {% elif attendance.attendance_percentage >= 75 %}bg-warning text-dark
+                                        {% else %}bg-danger{% endif %}">
+                                        {% if attendance.attendance_percentage >= 90 %}Excellent
+                                        {% elif attendance.attendance_percentage >= 75 %}Good
+                                        {% else %}Defaulter{% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Summary Card -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Attendance Summary</h5>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p class="card-text">
+                                            <strong>Total Months:</strong><br>
+                                            {{ attendance_records|length }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p class="card-text">
+                                            <strong>Avg. Attendance:</strong><br>
+                                            {{ "%.2f"|format(attendance_records|sum(attribute='attendance_percentage') / attendance_records|length) }}%
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p class="card-text">
+                                            <strong>Defaulter Months:</strong><br>
+                                            {{ attendance_records|selectattr('attendance_percentage', 'lt', 75)|list|length }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p class="card-text">
+                                            <strong>Best Month:</strong><br>
+                                            {% set best_month = attendance_records|max(attribute='attendance_percentage') %}
+                                            {{ best_month.month }} ({{ best_month.attendance_percentage }}%)
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-calendar-times text-muted" style="font-size: 4rem;"></i>
+                    <h4 class="text-muted mt-3">No Attendance Records Found</h4>
+                    <p class="text-muted">No attendance data is available for this student</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

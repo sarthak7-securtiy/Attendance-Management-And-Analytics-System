@@ -1,0 +1,567 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance Analysis - PWD Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Attendance Analysis</h1>
+    </div>
+</div>
+
+{% if overall_stats %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Attendance Distribution</h5>
+            </div>
+            <div class="card-body text-center">
+                <canvas id="attendanceDistributionChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Attendance Categories</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="attendanceCategoriesChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Monthly Attendance Trend</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyAttendanceChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Daily Attendance Analysis Section -->
+{% if daily_stats and daily_stats|length > 0 %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Daily Attendance Analysis</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="dailyAttendanceChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Daily Attendance Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="dailyStatsTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Avg. Attendance %</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for date, avg_attendance in daily_stats.items() %}
+                            <tr>
+                                <td>{{ date }}</td>
+                                <td>{{ "%.2f"|format(avg_attendance) }}%</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if avg_attendance >= 90 %}bg-success
+                                        {% elif avg_attendance >= 75 %}bg-warning text-dark
+                                        {% else %}bg-danger{% endif %}">
+                                        {% if avg_attendance >= 90 %}
+                                            Excellent
+                                        {% elif avg_attendance >= 75 %}
+                                            Good
+                                        {% else %}
+                                            Defaulter
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Overall Stats -->
+<div class="dashboard-stats">
+    <div class="card stat-card bg-primary text-white">
+        <div class="card-body text-center">
+            <div class="number text-dark">{{ overall_stats.total_records }}</div>
+            <div class="label text-dark">Total Records</div>
+        </div>
+    </div>
+    <div class="card stat-card bg-info text-white">
+        <div class="card-body text-center">
+            <div class="number text-dark">{{ overall_stats.total_students }}</div>
+            <div class="label text-dark">Total Students</div>
+        </div>
+    </div>
+    <div class="card stat-card bg-success text-white">
+        <div class="card-body text-center">
+            <div class="number text-dark">{{ overall_stats.avg_attendance }}%</div>
+            <div class="label text-dark">Avg. Attendance</div>
+        </div>
+    </div>
+    <div class="card stat-card bg-warning text-dark">
+        <div class="card-body text-center">
+            <div class="number text-dark">{{ overall_stats.defaulter_count }}</div>
+            <div class="label text-dark">Defaulter Count</div>
+        </div>
+    </div>
+</div>
+
+<!-- Attendance Categories -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Attendance Categories</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ overall_stats.excellent_count }}</h3>
+                                <p class="mb-0">Excellent (90%+)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-dark">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ overall_stats.good_count }}</h3>
+                                <p class="mb-0">Good (75-89%)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-danger text-white">
+                            <div class="card-body">
+                                <h3 class="mb-0">{{ overall_stats.defaulter_count }}</h3>
+                                <p class="mb-0">Defaulter (&lt;75%)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Monthly Stats -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Monthly Attendance Statistics</h5>
+            </div>
+            <div class="card-body">
+                {% if monthly_stats %}
+                <div class="table-responsive">
+                    <table class="table table-striped" id="monthlyStatsTable">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Avg. Attendance</th>
+                                <th>Total Records</th>
+                                <th>Defaulter Count</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for month, stats in monthly_stats.items() %}
+                            <tr>
+                                <td><strong>{{ month }}</strong></td>
+                                <td>{{ stats.avg_attendance }}%</td>
+                                <td>{{ stats.total_records }}</td>
+                                <td>{{ stats.defaulter_count }}</td>
+                                <td>
+                                    <a href="{{ url_for('analysis.monthly_analysis', month=month) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No monthly statistics available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Defaulter List -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Defaulter List (Attendance &lt; 75%)</h5>
+            </div>
+            <div class="card-body">
+                {% if defaulter_list and defaulter_list|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-striped" id="defaulterListTable">
+                        <thead>
+                            <tr>
+                                <th>Ticket No</th>
+                                <th>Name</th>
+                                <th>Trade</th>
+                                <th>Avg. Attendance</th>
+                                <th>Defaulter Months</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for defaulter in defaulter_list %}
+                            <tr>
+                                <td>{{ defaulter.student.ticket_no }}</td>
+                                <td>{{ defaulter.student.name }}</td>
+                                <td>{{ defaulter.student.qualification_trade or 'N/A' }}</td>
+                                <td><span class="badge bg-danger">{{ defaulter.avg_attendance }}%</span></td>
+                                <td>
+                                    {% for att in defaulter.attendance_records %}
+                                        <span class="badge bg-warning text-dark">{{ att.month }}</span>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('search.view_student', ticket_no=defaulter.student.ticket_no) }}" 
+                                       class="btn btn-sm btn-outline-info">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No defaulter records found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if overall_stats and chart_data %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Attendance Distribution Chart (Pie Chart)
+        const attendanceDistributionCtx = document.getElementById('attendanceDistributionChart').getContext('2d');
+        window.attendanceDistributionChart = new Chart(attendanceDistributionCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ chart_data.attendance_categories.labels | tojson }},
+                datasets: [{
+                    data: {{ chart_data.attendance_categories.data | tojson }},
+                    backgroundColor: {{ chart_data.attendance_categories.colors | tojson }},
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return label + ': ' + value + ' (' + percentage + '%)';
+                            }
+                        },
+                        titleFont: {
+                            size: 14
+                        },
+                        bodyFont: {
+                            size: 13
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Monthly Attendance Trend Chart (Line Chart)
+        const monthlyAttendanceCtx = document.getElementById('monthlyAttendanceChart').getContext('2d');
+        window.monthlyAttendanceChart = new Chart(monthlyAttendanceCtx, {
+            type: 'line',
+            data: {
+                labels: {{ chart_data.monthly_labels | tojson }},
+                datasets: [
+                    {
+                        label: 'Avg Attendance %',
+                        data: {{ chart_data.monthly_attendance | tojson }},
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    },
+                    {
+                        label: 'Defaulter Count',
+                        data: {{ chart_data.monthly_defaulter | tojson }},
+                        borderColor: '#dc3545',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Value',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+        
+        // Attendance Categories Chart (Bar Chart)
+        const attendanceCategoriesCtx = document.getElementById('attendanceCategoriesChart').getContext('2d');
+        window.attendanceCategoriesChart = new Chart(attendanceCategoriesCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_data.attendance_categories.labels | tojson }},
+                datasets: [{
+                    label: 'Number of Students',
+                    data: {{ chart_data.attendance_categories.data | tojson }},
+                    backgroundColor: {{ chart_data.attendance_categories.colors | tojson }},
+                    borderColor: {{ chart_data.attendance_categories.colors | tojson }},
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        titleFont: {
+                            size: 14
+                        },
+                        bodyFont: {
+                            size: 13
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Students',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Category',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Daily Attendance Chart (Line Chart)
+        {% if daily_stats %}
+        const dailyAttendanceCtx = document.getElementById('dailyAttendanceChart');
+        if (dailyAttendanceCtx) {
+            // Prepare data from server-side template
+            const dailyAttendanceData = [];
+            const dailyLabels = [];
+            {% for date, avg_attendance in daily_stats.items() %}
+            dailyLabels.push('{{ date }}');
+            dailyAttendanceData.push({{ avg_attendance }});
+            {% endfor %}
+            
+            window.dailyAttendanceChart = new Chart(dailyAttendanceCtx, {
+                type: 'line',
+                data: {
+                    labels: dailyLabels.reverse(),
+                    datasets: [{
+                        label: 'Daily Average Attendance %',
+                        data: dailyAttendanceData.reverse(),
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Attendance %',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+        {% endif %}
+    });
+</script>
+{% endif %}
+{% endblock %}

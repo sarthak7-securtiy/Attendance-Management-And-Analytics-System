@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - PWD Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Dashboard</h1>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="dashboard-stats">
+    <div class="card stat-card bg-primary text-white h-100">
+        <div class="card-body text-center">
+            <div class="number display-4 text-dark">{{ total_students }}</div>
+            <div class="label text-uppercase font-weight-bold text-dark">Total Students</div>
+        </div>
+    </div>
+    <div class="card stat-card bg-success text-white h-100">
+        <div class="card-body text-center">
+            <div class="number display-4 text-dark">{{ total_attendance_records }}</div>
+            <div class="label text-uppercase font-weight-bold text-dark">Attendance Records</div>
+        </div>
+    </div>
+    <div class="card stat-card bg-info text-white h-100">
+        <div class="card-body text-center">
+            <div class="number display-4 text-dark">0</div>
+            <div class="label text-uppercase font-weight-bold text-dark">Active Users</div>
+        </div>
+    </div>
+    <div class="card stat-card bg-warning text-dark h-100">
+        <div class="card-body text-center">
+            <div class="number display-4 text-dark">0</div>
+            <div class="label text-uppercase font-weight-bold text-dark">Defaulter Count</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('student.upload_student_master') }}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-file-upload"></i><br>
+                            Upload Students
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('attendance.upload_attendance') }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-file-upload"></i><br>
+                            Upload Attendance
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('search.search') }}" class="btn btn-info btn-lg">
+                            <i class="fas fa-search"></i><br>
+                            Search Student
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('analysis.attendance_analysis') }}" class="btn btn-warning btn-lg">
+                            <i class="fas fa-chart-bar"></i><br>
+                            View Analysis
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Students</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_students %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Ticket No</th>
+                                <th>Name</th>
+                                <th>Trade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in recent_students %}
+                            <tr>
+                                <td>{{ student.ticket_no }}</td>
+                                <td>{{ student.name }}</td>
+                                <td>{{ student.qualification_trade }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No recent students found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Recent Attendance</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_attendance %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Ticket No</th>
+                                <th>Month</th>
+                                <th>Attendance %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attendance in recent_attendance %}
+                            <tr>
+                                <td>{{ attendance.ticket_no }}</td>
+                                <td>{{ attendance.month }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if attendance.attendance_percentage >= 90 %}bg-success
+                                        {% elif attendance.attendance_percentage >= 75 %}bg-warning text-dark
+                                        {% else %}bg-danger{% endif %}">
+                                        {{ attendance.attendance_percentage }}%
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No recent attendance records found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Info -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">System Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-database text-primary"></i> Database Status</h6>
+                        <p class="text-success">Connected</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-server text-primary"></i> Server Status</h6>
+                        <p class="text-success">Running</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Danger Zone Section -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Danger Zone</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-12 mb-3">
+                        <button type="button" class="btn btn-danger btn-lg" data-bs-toggle="modal" data-bs-target="#clearDataModal">
+                            <i class="fas fa-trash-alt"></i><br>
+                            Clear All Data
+                        </button>
+                        <p class="mt-2 text-muted">This will permanently delete all student and attendance records</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Clear Data Confirmation Modal -->
+<div class="modal fade" id="clearDataModal" tabindex="-1" aria-labelledby="clearDataModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="clearDataModalLabel">Confirm Data Clear</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-center">
+                    <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                </p>
+                <p class="text-center fs-5">Are you absolutely sure?</p>
+                <p>This action will permanently delete all student and attendance records from the database.</p>
+                <p class="text-danger fw-bold">This action cannot be undone!</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle"></i> Please note: This will clear all data from both student and attendance tables.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" action="{{ url_for('dashboard.clear_data') }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Yes, Clear All Data</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

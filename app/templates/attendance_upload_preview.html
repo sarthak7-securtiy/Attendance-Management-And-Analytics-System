@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance Upload Preview - PWD Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Attendance Upload Preview</h1>
+    </div>
+</div>
+
+{% if errors %}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-warning">
+            <h4 class="alert-heading">Validation Issues Found</h4>
+            <ul class="mb-0">
+                {% for error in errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Upload Summary</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Total Records to be Uploaded:</strong> {{ total_records }}</p>
+                {% if errors %}
+                <p><strong>Records with Errors:</strong> {{ errors|length }}</p>
+                <p><strong>Valid Records:</strong> {{ total_records - errors|length }}</p>
+                {% endif %}
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle"></i> Column Mapping</h5>
+                    <p>The system automatically detected the following columns from your Excel file:</p>
+                    <ul class="mb-0">
+                        <li>Ticket Number: Detected from column in your file</li>
+                        <li>Month: Detected from column in your file</li>
+                        <li>Total Working Days: Detected from column in your file</li>
+                        <li>Present Days: Detected from column in your file</li>
+                        <li>Attendance Percentage: Detected from column in your file</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if data %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Sample Data Preview</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Ticket No</th>
+                                <th>Month</th>
+                                <th>Total Days</th>
+                                <th>Present Days</th>
+                                <th>Absent Days</th>
+                                <th>Attendance %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for attendance in data[:5] %}  <!-- Show only first 5 records as preview -->
+                            <tr>
+                                <td>{{ attendance.ticket_no }}</td>
+                                <td>{{ attendance.month }}</td>
+                                <td>{{ attendance.total_days }}</td>
+                                <td>{{ attendance.present_days }}</td>
+                                <td>{{ attendance.absent_days }}</td>
+                                <td>{{ attendance.attendance_percentage }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mt-2">Showing {{ data[:5]|length }} of {{ total_records }} records</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <button id="confirm-attendance-upload-btn" class="btn btn-success btn-lg">
+                    <i class="fas fa-check-circle"></i> Confirm and Upload All Records
+                </button>
+                <a href="{{ url_for('attendance.upload_attendance') }}" class="btn btn-secondary btn-lg ms-2">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('confirm-attendance-upload-btn').addEventListener('click', function() {
+    // Disable the button and show loading state
+    const btn = this;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    btn.disabled = true;
+    
+    // Send the data to the server
+    fetch('{{ url_for("attendance.confirm_attendance_upload") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({{ data | tojson }})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Attendance records uploaded successfully!');
+            window.location.href = '{{ url_for("attendance.list_attendance") }}';
+        } else {
+            alert('Error: ' + data.message);
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm and Upload All Records';
+            btn.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred during upload');
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm and Upload All Records';
+        btn.disabled = false;
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

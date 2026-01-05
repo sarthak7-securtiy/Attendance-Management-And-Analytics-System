@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Student Master - PWD Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="h3 mb-4">Upload Student Master Data</h1>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Upload Excel File</h5>
+            </div>
+            <div class="card-body">
+                <form id="upload-form" method="POST" action="{{ url_for('student.upload_student_master') }}" enctype="multipart/form-data">
+                    <div class="upload-box">
+                        <i class="fas fa-file-excel text-success"></i>
+                        <p>Select an Excel file containing student master data</p>
+                        <p class="text-muted">Required columns: PNO, Medical Policy, Ticket No, Name, Father Name, DOB, Gender, Mobile Number, Address, Qualification Trade, Passing Year, College Name, SSC Percentage, HSC Percentage, Aadhaar Number, PAN Number, Email ID, Blood Group, Current Address (Bus Stop / Route)</p>
+                        <input type="file" name="file" class="form-control" accept=".xlsx,.xls" required>
+                    </div>
+                    
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload"></i> Upload File
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
