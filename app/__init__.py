@@ -3,6 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 """
-PWD Student & Attendance Management System
+Integrated Student Governance & Attendance Analytics System
 Main application package
 """

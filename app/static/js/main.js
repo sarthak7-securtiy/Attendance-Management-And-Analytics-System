@@ -1,4 +1,4 @@
-// Main JavaScript file for PWD Management System
+// Main JavaScript file for Integrated Student Governance & Attendance Analytics System
 
 // Function to handle file uploads with progress
 function handleFileUpload(formId, uploadUrl, successCallback) {

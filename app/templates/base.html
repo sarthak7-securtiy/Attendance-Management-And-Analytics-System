@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}PWD Student & Attendance Management System{% endblock %}</title>
+    <title>{% block title %}Integrated Student Governance & Attendance Analytics System{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">
-                <i class="fas fa-graduation-cap"></i> PWD Management System
+                <i class="fas fa-graduation-cap"></i> Integrated Student Governance & Attendance Analytics System
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -24,23 +26,28 @@
                         <a class="nav-link" href="{{ url_for('dashboard.index') }}">Dashboard</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="uploadDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="uploadDropdown" role="button"
+                            data-bs-toggle="dropdown">
                             <i class="fas fa-file-upload"></i> Upload
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('student.upload_student_master') }}">Student Master</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('attendance.upload_attendance') }}">Attendance</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('student.upload_student_master') }}">Student
+                                    Master</a></li>
+                            <li><a class="dropdown-item"
+                                    href="{{ url_for('attendance.upload_attendance') }}">Attendance</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('search.search') }}">Search</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="analysisDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="analysisDropdown" role="button"
+                            data-bs-toggle="dropdown">
                             <i class="fas fa-chart-bar"></i> Analysis
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('analysis.attendance_analysis') }}">Overall Analysis</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('analysis.attendance_analysis') }}">Overall
+                                    Analysis</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -59,14 +66,15 @@
 
     <div class="container mt-4">
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
         {% endwith %}
 
         {% block content %}{% endblock %}
@@ -74,7 +82,7 @@
 
     <footer class="footer mt-5 py-3 bg-light">
         <div class="container text-center">
-            <span class="text-muted">PWD Student & Attendance Management System &copy; 2025</span>
+            <span class="text-muted">Integrated Student Governance & Attendance Analytics System &copy; 2025</span>
         </div>
     </footer>
 
@@ -83,4 +91,5 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
+
 </html>

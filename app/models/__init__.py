@@ -1,3 +1,3 @@
 """
-Database models for PWD Student & Attendance Management System
+Database models for Integrated Student Governance & Attendance Analytics System
 """

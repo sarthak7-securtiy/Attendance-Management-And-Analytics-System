@@ -1,4 +1,4 @@
-# PWD Student & Attendance Management System
+# Integrated Student Governance & Attendance Analytics System
 
 A comprehensive web application for managing student records and attendance data using Excel uploads and Ticket Number-based search.
 
